@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adat kezelés</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .cim {
+            font-size: 24px;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        input[type="text"], 
+        input[type="number"] {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        input[type="text"]:focus, 
+        input[type="number"]:focus {
+            border-color: #4CAF50;
+        }
+
+        input[type="text"].error, 
+        input[type="number"].error {
+            border-color: #f44336;
+            background-color: #ffebee;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+
+        .new-btn {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: none;
+        }
+
+        .new-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: none;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .data-display {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .data-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .data-value {
+            color: #333;
+            text-align: right;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .cim {
+                font-size: 20px;
+            }
+            
+            input[type="text"], 
+            input[type="number"] {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .save-btn, .new-btn, .delete-btn {
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="cim">
+            <h1>Adatkezelő</h1>
+        </div>
+        
+        <!-- Form rész -->
+        <form id="addressForm">
+            <div class="form-group">
+                <label for="nev">Név:</label>
+                <input type="text" id="nev" required>
+            </div>
+
+            <div class="form-group">
+                <label for="telep">Település:</label>
+                <input type="text" id="telep" required>
+            </div>
+
+            <div class="form-group">
+                <label for="irany">Irányítószám:</label>
+                <input type="number" id="irany" required>
+            </div>
+
+            <div class="form-group">
+                <label for="kozt">Közterület:</label>
+                <input type="text" id="kozt" required>
+            </div>
+
+            <div class="form-group">
+                <label for="haz">Házszám:</label>
+                <input type="number" id="haz" required>
+            </div>
+        </form>
+
+        <!-- Adatok megjelenítése -->
+        <div id="dataDisplay" class="data-display">
+            <h3 style="margin-bottom: 15px; color: #333;">Mentett adatok:</h3>
+            <div class="data-item">
+                <span class="data-label">Név:</span>
+                <span class="data-value" id="displayNev">-</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Település:</span>
+                <span class="data-value" id="displayTelep">-</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Irányítószám:</span>
+                <span class="data-value" id="displayIrany">-</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Közterület:</span>
+                <span class="data-value" id="displayKozt">-</span>
+            </div>
+            <div class="data-item">
+                <span class="data-label">Házszám:</span>
+                <span class="data-value" id="displayHaz">-</span>
+            </div>
+        </div>
+
+        <!-- Gombok -->
+        <div class="button-group">
+            <button type="button" class="save-btn" onclick="saveData()">Mentés</button>
+            <button type="button" class="new-btn" id="newBtn" onclick="newData()">Új</button>
+            <button type="button" class="delete-btn" id="deleteBtn" onclick="deleteData()">Adatok törlése</button>
+        </div>
+    </div>
+
+    <script>
+        // Oldal betöltésekor ellenőrizzük, van-e mentett adat a localStorage-ban
+        document.addEventListener('DOMContentLoaded', function() {
+            displaySavedData();
+        });
+
+        function saveData() {
+            // Összes input mező lekérése
+            const nev = document.getElementById('nev').value.trim();
+            const telep = document.getElementById('telep').value.trim();
+            const irany = document.getElementById('irany').value.trim();
+            const kozt = document.getElementById('kozt').value.trim();
+            const haz = document.getElementById('haz').value.trim();
+
+            // Hibás mezők törlése (ha voltak)
+            clearErrors();
+
+            // Validáció
+            let hasError = false;
+            const inputs = [
+                { element: document.getElementById('nev'), value: nev },
+                { element: document.getElementById('telep'), value: telep },
+                { element: document.getElementById('irany'), value: irany },
+                { element: document.getElementById('kozt'), value: kozt },
+                { element: document.getElementById('haz'), value: haz }
+            ];
+
+            // Ellenőrizzük, hogy minden mező ki van-e töltve
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.element.classList.add('error');
+                    hasError = true;
+                }
+            });
+
+            if (hasError) {
+                return; // Nem mentünk, ha van üres mező
+            }
+
+            // Adatok mentése localStorage-ba
+            const userData = {
+                nev: nev,
+                telep: telep,
+                irany: irany,
+                kozt: kozt,
+                haz: haz
+            };
+
+            // JSON stringként mentjük a localStorage-ba
+            localStorage.setItem('userData', JSON.stringify(userData));
+
+            // Adatok megjelenítése
+            displaySavedData();
+            
+            // Form elrejtése, gombok megjelenítése
+            toggleView(true);
+            
+            alert('Adatok sikeresen elmentve a localStorage-ba!');
+        }
+
+        function displaySavedData() {
+            // Adatok lekérése a localStorage-ból
+            const savedDataString = localStorage.getItem('userData');
+            
+            if (savedDataString) {
+                // JSON string visszaalakítása objektummá
+                const savedData = JSON.parse(savedDataString);
+                
+                // Adatok betöltése a megjelenítő területre
+                document.getElementById('displayNev').textContent = savedData.nev || '-';
+                document.getElementById('displayTelep').textContent = savedData.telep || '-';
+                document.getElementById('displayIrany').textContent = savedData.irany || '-';
+                document.getElementById('displayKozt').textContent = savedData.kozt || '-';
+                document.getElementById('displayHaz').textContent = savedData.haz || '-';
+                
+                toggleView(true);
+            } else {
+                // Ha nincs adat, minden mező "-" legyen
+                document.getElementById('displayNev').textContent = '-';
+                document.getElementById('displayTelep').textContent = '-';
+                document.getElementById('displayIrany').textContent = '-';
+                document.getElementById('displayKozt').textContent = '-';
+                document.getElementById('displayHaz').textContent = '-';
+                
+                toggleView(false);
+            }
+        }
+
+        function newData() {
+            // Form mezők törlése
+            document.getElementById('addressForm').reset();
+            clearErrors();
+            
+            // Nézet váltása
+            toggleView(false);
+        }
+
+        function deleteData() {
+            if (confirm('Biztosan törölni szeretnéd az összes mentett adatot?')) {
+                // Adatok törlése a localStorage-ból
+                localStorage.removeItem('userData');
+                
+                // Form mezők törlése
+                document.getElementById('addressForm').reset();
+                clearErrors();
+                
+                // Adatok megjelenítésének frissítése
+                displaySavedData();
+                
+                alert('Adatok sikeresen törölve a localStorage-ból!');
+            }
+        }
+
+        function toggleView(showData) {
+            const form = document.getElementById('addressForm');
+            const dataDisplay = document.getElementById('dataDisplay');
+            const saveBtn = document.querySelector('.save-btn');
+            const newBtn = document.getElementById('newBtn');
+            const deleteBtn = document.getElementById('deleteBtn');
+
+            if (showData) {
+                // Adatok megjelenítése
+                form.style.display = 'none';
+                dataDisplay.style.display = 'block';
+                saveBtn.style.display = 'none';
+                newBtn.style.display = 'block';
+                deleteBtn.style.display = 'block';
+            } else {
+                // Form megjelenítése
+                form.style.display = 'block';
+                dataDisplay.style.display = 'none';
+                saveBtn.style.display = 'block';
+                newBtn.style.display = 'none';
+                deleteBtn.style.display = 'none';
+            }
+        }
+
+        function clearErrors() {
+            const inputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+            inputs.forEach(input => {
+                input.classList.remove('error');
+            });
+        }
+
+        // Valós idejű validáció - hibás stílus eltűnik, amikor a felhasználó elkezd gépelni
+        document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    this.classList.remove('error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
