@@ -162,7 +162,7 @@
             text-align: right;
         }
 
-        /* Responsive design */
+       
         @media (max-width: 480px) {
             .card {
                 padding: 20px;
@@ -192,7 +192,7 @@
             <h1>Adatkezelő</h1>
         </div>
         
-        <!-- Form rész -->
+        
         <form id="addressForm">
             <div class="form-group">
                 <label for="nev">Név:</label>
@@ -220,7 +220,7 @@
             </div>
         </form>
 
-        <!-- Adatok megjelenítése -->
+       
         <div id="dataDisplay" class="data-display">
             <h3 style="margin-bottom: 15px; color: #333;">Mentett adatok:</h3>
             <div class="data-item">
@@ -245,7 +245,7 @@
             </div>
         </div>
 
-        <!-- Gombok -->
+       
         <div class="button-group">
             <button type="button" class="save-btn" onclick="saveData()">Mentés</button>
             <button type="button" class="new-btn" id="newBtn" onclick="newData()">Új</button>
@@ -254,23 +254,23 @@
     </div>
 
     <script>
-        // Oldal betöltésekor ellenőrizzük, van-e mentett adat a localStorage-ban
+        
         document.addEventListener('DOMContentLoaded', function() {
             displaySavedData();
         });
 
         function saveData() {
-            // Összes input mező lekérése
+           
             const nev = document.getElementById('nev').value.trim();
             const telep = document.getElementById('telep').value.trim();
             const irany = document.getElementById('irany').value.trim();
             const kozt = document.getElementById('kozt').value.trim();
             const haz = document.getElementById('haz').value.trim();
 
-            // Hibás mezők törlése (ha voltak)
+           
             clearErrors();
 
-            // Validáció
+            
             let hasError = false;
             const inputs = [
                 { element: document.getElementById('nev'), value: nev },
@@ -280,7 +280,7 @@
                 { element: document.getElementById('haz'), value: haz }
             ];
 
-            // Ellenőrizzük, hogy minden mező ki van-e töltve
+            
             inputs.forEach(input => {
                 if (!input.value) {
                     input.element.classList.add('error');
@@ -289,10 +289,10 @@
             });
 
             if (hasError) {
-                return; // Nem mentünk, ha van üres mező
+                return; 
             }
 
-            // Adatok mentése localStorage-ba
+           
             const userData = {
                 nev: nev,
                 telep: telep,
@@ -301,27 +301,27 @@
                 haz: haz
             };
 
-            // JSON stringként mentjük a localStorage-ba
+            
             localStorage.setItem('userData', JSON.stringify(userData));
 
-            // Adatok megjelenítése
+            
             displaySavedData();
             
-            // Form elrejtése, gombok megjelenítése
+           
             toggleView(true);
             
             alert('Adatok sikeresen elmentve a localStorage-ba!');
         }
 
         function displaySavedData() {
-            // Adatok lekérése a localStorage-ból
+            
             const savedDataString = localStorage.getItem('userData');
             
             if (savedDataString) {
-                // JSON string visszaalakítása objektummá
+                
                 const savedData = JSON.parse(savedDataString);
                 
-                // Adatok betöltése a megjelenítő területre
+                
                 document.getElementById('displayNev').textContent = savedData.nev || '-';
                 document.getElementById('displayTelep').textContent = savedData.telep || '-';
                 document.getElementById('displayIrany').textContent = savedData.irany || '-';
@@ -330,7 +330,7 @@
                 
                 toggleView(true);
             } else {
-                // Ha nincs adat, minden mező "-" legyen
+                
                 document.getElementById('displayNev').textContent = '-';
                 document.getElementById('displayTelep').textContent = '-';
                 document.getElementById('displayIrany').textContent = '-';
@@ -342,24 +342,24 @@
         }
 
         function newData() {
-            // Form mezők törlése
+            
             document.getElementById('addressForm').reset();
             clearErrors();
             
-            // Nézet váltása
+           
             toggleView(false);
         }
 
         function deleteData() {
             if (confirm('Biztosan törölni szeretnéd az összes mentett adatot?')) {
-                // Adatok törlése a localStorage-ból
+                
                 localStorage.removeItem('userData');
                 
-                // Form mezők törlése
+                
                 document.getElementById('addressForm').reset();
                 clearErrors();
                 
-                // Adatok megjelenítésének frissítése
+               
                 displaySavedData();
                 
                 alert('Adatok sikeresen törölve a localStorage-ból!');
@@ -374,14 +374,14 @@
             const deleteBtn = document.getElementById('deleteBtn');
 
             if (showData) {
-                // Adatok megjelenítése
+                
                 form.style.display = 'none';
                 dataDisplay.style.display = 'block';
                 saveBtn.style.display = 'none';
                 newBtn.style.display = 'block';
                 deleteBtn.style.display = 'block';
             } else {
-                // Form megjelenítése
+                
                 form.style.display = 'block';
                 dataDisplay.style.display = 'none';
                 saveBtn.style.display = 'block';
@@ -397,7 +397,7 @@
             });
         }
 
-        // Valós idejű validáció - hibás stílus eltűnik, amikor a felhasználó elkezd gépelni
+        
         document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
             input.addEventListener('input', function() {
                 if (this.value.trim()) {
